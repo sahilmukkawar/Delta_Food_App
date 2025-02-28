@@ -1,0 +1,142 @@
+/* CustomOrder.css */
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead tr {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.table thead th {
+    border: none;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #ff3d00 !important;
+    background: transparent;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.table tbody tr td,
+.table tbody tr th {
+    padding: 15px;
+    vertical-align: middle;
+    border: none;
+    color: white !important;
+}
+
+/* Order number column */
+.table tbody tr th {
+    font-weight: 600;
+    color: #ffffff !important;
+}
+
+/* Date column */
+.table tbody tr td:nth-child(2) {
+    color: #ffffff !important;
+    font-size: 0.95rem;
+}
+
+/* Price column */
+.table tbody tr td:nth-child(3) {
+    font-weight: 600;
+    color: #ffffff !important;
+}
+
+/* Orders column */
+.table tbody tr td:nth-child(4) {
+    font-size: 0.95rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin-top: 20px !important;
+    }
+
+    .table thead th {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .table tbody tr td,
+    .table tbody tr th {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 576px) {
+    .container {
+        padding: 10px;
+    }
+
+    .table thead th {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .table tbody tr td,
+    .table tbody tr th {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Add scrollbar styling for the responsive table */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background:  rgba(231, 76, 60, 0.5);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: rgba(231, 76, 60, 0.7)
+}
+
+/* Optional loading state */
+.table tbody tr.loading-row td {
+    text-align: center;
+    padding: 30px;
+}
+
+/* Optional empty state */
+.table tbody tr.empty-row td {
+    text-align: center;
+    padding: 30px;
+    color: #ffffff !important;
+}
+
+/* Price formatting */
+.table tbody tr td.price {
+    font-family: monospace;
+}
+
+/* Multiple order items spacing */
+.table tbody tr td:last-child span:not(:last-child)::after {
+    content: ", ";
+    margin-right: 4px;
+    color: rgba(255, 255, 255);
+}

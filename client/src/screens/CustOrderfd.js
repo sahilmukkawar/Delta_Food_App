@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import './CustOrderfd.css';
 
 export default function CustOrderfd() {
  const [odata,setOdata]=useState([]);

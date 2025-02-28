@@ -74,7 +74,7 @@ export default function Navbar() {
         All Orders
       </Link>
       
-      <Link to="/admin/users" style={{
+      <Link to="/AddFood" style={{
         padding: '8px 20px',
         backgroundColor: '#4caf50',
         color: 'white',
@@ -82,7 +82,7 @@ export default function Navbar() {
         textDecoration: 'none',
         fontWeight: '500'
       }}>
-        Users
+        Add Food 
       </Link>
       
       <Link to="/admin/food-items" style={{
