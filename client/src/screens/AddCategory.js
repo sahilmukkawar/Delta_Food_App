@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function AddAdmin() {
+export default function AddCategory() {
   return <div>Add Category Page</div>;
 }

@@ -8,7 +8,7 @@ router.post('/addfood', async (req, res) => {
         console.log('Received request body:', req.body);
 
         // Validate required fields
-        const { name, description, CategoryName, img, price } = req.body;
+        const { name, description, CategoryName, img, price, half } = req.body;
         if (!name || !description || !CategoryName || !img || !price) {
             return res.status(400).json({
                 success: false,

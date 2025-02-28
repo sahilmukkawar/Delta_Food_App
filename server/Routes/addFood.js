@@ -22,8 +22,8 @@ async function addFoodItem(foodData) {
             img: foodData.img,
             options: [
                 {
-                    half: parseFloat(foodData.halfPrice) || 0,
-                    full: parseFloat(foodData.price)
+                    half: parseFloat(foodData.half) || 0,  // Changed from foodData.Price to foodData.half
+                    full: parseFloat(foodData.price) || 0
                 }
             ],
             createdAt: new Date()

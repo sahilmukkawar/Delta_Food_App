@@ -8,7 +8,7 @@ export default function AddAdmin() {
     CategoryName: '',
     img: '',
     price: '',
-    halfPrice: ''
+    half: '' // Changed from halfPrice to half to match backend field name
   });
 
   const [categories, setCategories] = useState([]);
@@ -58,7 +58,7 @@ export default function AddAdmin() {
       const calculatedHalfPrice = (fullPrice * 0.6).toFixed(2);
       setFormData(prev => ({
         ...prev,
-        halfPrice: calculatedHalfPrice
+        half: calculatedHalfPrice // Changed from halfPrice to half
       }));
     }
   };
@@ -95,7 +95,8 @@ export default function AddAdmin() {
         description: formData.description,
         CategoryName: formData.CategoryName,
         img: formData.img,
-        price: parseFloat(formData.price)
+        price: parseFloat(formData.price),
+        half: parseFloat(formData.half) // Added half price to the request data
       };
       console.log('Sending data to API:', requestData);
 
@@ -140,7 +141,7 @@ export default function AddAdmin() {
           CategoryName: '',
           img: '',
           price: '',
-          halfPrice: ''
+          half: '' // Changed from halfPrice to half
         });
       } else {
         setMessage({ text: data.message || 'Failed to add food item', type: 'error' });
@@ -250,16 +251,16 @@ export default function AddAdmin() {
                   </div>
                   <div className="col-md-6">
                     <div className="mb-3">
-                      <label htmlFor="halfPrice" className="form-label">Half Price (Calculated)</label>
+                      <label htmlFor="half" className="form-label">Half Price (Calculated)</label>
                       <input
                         type="number"
                         className="form-control"
-                        id="halfPrice"
-                        name="halfPrice"
-                        value={formData.halfPrice}
-                        disabled
+                        id="half"
+                        name="half"
+                        value={formData.half}
+                        onChange={handleChange}
                       />
-                      <small className="form-text text-muted">Automatically calculated as 60% of full price</small>
+                      <small className="form-text text-muted">Automatically calculated as 60% of full price, but you can adjust it</small>
                     </div>
                   </div>
                 </div>
