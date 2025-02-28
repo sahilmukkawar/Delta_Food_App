@@ -4,7 +4,7 @@ import { useCart, useDispatchCart } from '../components/ContextReducer';
 export default function Cart(props) {
   const data = useCart();
   const dispatch = useDispatchCart();
-  
+
   const totalPrice = data.reduce((total, food) => total + food.price, 0);
 
   async function handleCheckOut() {
@@ -20,7 +20,7 @@ export default function Cart(props) {
           price: totalPrice
         })
       });
-  
+
       const json = await response.json();
       if (json.success) {
         dispatch({ type: "ORDERRECEIVED" });
@@ -70,7 +70,7 @@ export default function Cart(props) {
           fontSize: '24px',
           fontWeight: '600'
         }}>Your Cart</h2>
-        
+
         <div className="table-responsive">
           <table style={{
             width: '100%',
@@ -112,7 +112,7 @@ export default function Cart(props) {
                     ₹{food.price}
                   </td>
                   <td style={{ padding: '16px', textAlign: 'right', borderRadius: '0 8px 8px 0' }}>
-                    <button 
+                    <button
                       onClick={() => dispatch({ type: "REMOVE", index: index })}
                       style={{
                         backgroundColor: '#dc3545',
@@ -152,8 +152,8 @@ export default function Cart(props) {
           }}>
             Total: <span style={{ color: '#ff3d00' }}>₹{totalPrice}/-</span>
           </div>
-          
-          <button 
+
+          <button
             onClick={handleCheckOut}
             style={{
               backgroundColor: '#28a745',

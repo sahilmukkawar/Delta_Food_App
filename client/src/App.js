@@ -5,6 +5,7 @@ import Order from "./screens/Orders.js";
 import AddFood from './screens/AddFood.js';
 import AddCategory from './screens/AddCategory.js';
 import AdminDashboard from './screens/AdminDashboard.js';
+import Food_item from "./screens/Food_item.js";
 
 
 import {
@@ -20,20 +21,21 @@ import { CartProvider } from "./components/ContextReducer";
 function App() {
   return (
     <CartProvider>
-    <Router>
-    <div className="App">
-      <Routes>
-      <Route exact path="/" element={<Home/>}/>
-      <Route exact path="/login" element={<Login/>}/>
-      <Route exact path="/admin" element={<AdminDashboard />} />
-      <Route exact path="/createuser" element={<Signup/>}/>
-      <Route exact path="/orders" element={<Order />} />
-      <Route exact path="/addfood" element={<AddFood />} />
-      <Route exact path="/addcategory" element={<AddCategory />} />
-     
-      </Routes>
-    </div>
-    </Router>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/admin" element={<AdminDashboard />} />
+            <Route exact path="/createuser" element={<Signup />} />
+            <Route exact path="/orders" element={<Order />} />
+            <Route exact path="/addfood" element={<AddFood />} />
+            <Route exact path="/addcategory" element={<AddCategory />} />
+            <Route exact path="/Food_item" element={<Food_item />} />
+
+          </Routes>
+        </div>
+      </Router>
     </CartProvider>
   );
 }

@@ -13,7 +13,7 @@ export default function Navbar() {
     name: "",
     role: "user" // default role
   });
-  
+
   const data = useCart();
   const dispatch = useDispatchCart();
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Navbar() {
     const fetchUserInfo = async () => {
       const userEmail = localStorage.getItem("userEmail");
       const authToken = localStorage.getItem("authToken");
-      
+
       if (userEmail && authToken) {
         try {
           const response = await fetch("http://localhost:5000/api/getUserInfo", {
@@ -33,7 +33,7 @@ export default function Navbar() {
             },
             body: JSON.stringify({ email: userEmail })
           });
-          
+
           const userData = await response.json();
           if (userData.success) {
             setUserInfo({
@@ -62,7 +62,7 @@ export default function Navbar() {
       <span style={{ color: 'white', fontWeight: 'bold' }}>
         Admin: {userInfo.name}
       </span>
-      
+
       <Link to="/orders" style={{
         padding: '8px 20px',
         backgroundColor: '#2196f3',
@@ -73,7 +73,7 @@ export default function Navbar() {
       }}>
         All Orders
       </Link>
-      
+
       <Link to="/AddFood" style={{
         padding: '8px 20px',
         backgroundColor: '#4caf50',
@@ -82,20 +82,23 @@ export default function Navbar() {
         textDecoration: 'none',
         fontWeight: '500'
       }}>
-        Add Food 
+        Add Food
       </Link>
-      
-      <Link to="/admin/food-items" style={{
-        padding: '8px 20px',
-        backgroundColor: '#ff9800',
-        color: 'white',
-        borderRadius: '25px',
-        textDecoration: 'none',
-        fontWeight: '500'
-      }}>
+
+      <Link
+        to="/Food_item"
+        style={{
+          padding: "8px 20px",
+          backgroundColor: "#ff9800",
+          color: "white",
+          borderRadius: "25px",
+          textDecoration: "none",
+          fontWeight: "500",
+        }}
+      >
         Food Items
-      </Link>
-      
+      </Link>;
+
       <button
         onClick={handleLogout}
         style={{

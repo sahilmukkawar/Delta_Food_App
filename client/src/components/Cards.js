@@ -7,7 +7,7 @@ export default function Card(props) {
   const [cartButtonText, setCartButtonText] = useState("ADD");
   const keylist = Object.keys(props.options);
   const dispatch = useDispatchCart();
-  
+
   useEffect(() => {
     setSize(keylist[0]);
   }, []);
@@ -52,8 +52,8 @@ export default function Card(props) {
         overflow: "hidden",
         borderRadius: "16px 16px 0 0"
       }}>
-        <img 
-          src={props.imglink} 
+        <img
+          src={props.imglink}
           alt={props.title}
           style={{
             width: "100%",
@@ -116,8 +116,8 @@ export default function Card(props) {
             fontWeight: "700",
             color: "#1c1c1c"
           }}>₹{finalPrice}</div>
-          
-          <select 
+
+          <select
             value={size}
             onChange={(e) => setSize(e.target.value)}
             style={{
