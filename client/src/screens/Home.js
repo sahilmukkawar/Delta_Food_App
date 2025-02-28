@@ -19,7 +19,6 @@ export default function Home() {
           "Content-Type": "application/json"
         }
       });
-      
       const data = await response.json();
       setFoodCat(data[1]);
       setFoodItem(data[0]);
@@ -38,23 +37,23 @@ export default function Home() {
       {cardButton && showAlert && (
         <div className="alert alert-warning alert-dismissible fade show" role="alert">
           <strong>Hello Foodie!</strong> You should login before you proceed...
-          <button 
-            type="button" 
-            className="close" 
-            onClick={() => setCardButton(false)} 
+          <button
+            type="button"
+            className="close"
+            onClick={() => setCardButton(false)}
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
       )}
-      
+
       <Carousal setSearchedString={setSearchedString} />
-      
-      <div 
-        className="container" 
-        style={{ 
-          backgroundImage: "url('/img/bg.png')" 
+
+      <div
+        className="container"
+        style={{
+          backgroundImage: "url('/img/bg.png')"
         }}
       >
         {foodCat.length > 0 ? (
@@ -66,12 +65,12 @@ export default function Home() {
                 {foodItem.length > 0 ? (
                   foodItem
                     .filter((item) => (
-                      item.CategoryName === data.CategoryName && 
+                      item.CategoryName === data.CategoryName &&
                       item.name.toLowerCase().includes(searchedString.toLowerCase())
                     ))
                     .map((categFoodItem) => (
                       <div key={categFoodItem._id} className="my-3 mx-3">
-                        <Cards 
+                        <Cards
                           imglink={categFoodItem.img}
                           title={categFoodItem.name}
                           description={categFoodItem.description}

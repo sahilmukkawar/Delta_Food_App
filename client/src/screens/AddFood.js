@@ -8,6 +8,7 @@ export default function AddAdmin() {
     CategoryName: '',
     img: '',
     price: '',
+    halfPrice: ''
   });
 
   const [categories, setCategories] = useState([]);
@@ -15,10 +16,13 @@ export default function AddAdmin() {
   const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
 
+  // Define the base URL for API requests
+  const API_BASE_URL = "http://localhost:5000/api";
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/foodData", {
+        const response = await fetch(`${API_BASE_URL}/foodData`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -26,7 +30,7 @@ export default function AddAdmin() {
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Network response was not ok: ${response.status}`);
         }
 
         const data = await response.json();
@@ -34,7 +38,7 @@ export default function AddAdmin() {
         setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        setMessage({ text: 'Failed to load categories', type: 'error' });
+        setMessage({ text: `Failed to load categories: ${error.message}`, type: 'error' });
       }
     };
 
@@ -47,6 +51,16 @@ export default function AddAdmin() {
       ...prev,
       [name]: value
     }));
+
+    // Automatically calculate half price when full price changes
+    if (name === 'price') {
+      const fullPrice = parseFloat(value) || 0;
+      const calculatedHalfPrice = (fullPrice * 0.6).toFixed(2);
+      setFormData(prev => ({
+        ...prev,
+        halfPrice: calculatedHalfPrice
+      }));
+    }
   };
 
   const validateForm = () => {
@@ -75,20 +89,48 @@ export default function AddAdmin() {
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:5000/api/addfood', {
+      // Log data being sent to API for debugging
+      const requestData = {
+        name: formData.name,
+        description: formData.description,
+        CategoryName: formData.CategoryName,
+        img: formData.img,
+        price: parseFloat(formData.price)
+      };
+      console.log('Sending data to API:', requestData);
+
+      // Make sure this endpoint matches your backend route
+      const response = await fetch(`${API_BASE_URL}/addfood`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authToken}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(requestData)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
+      // First check if the response is ok before trying to parse JSON
       if (!response.ok) {
-        throw new Error('Server response was not ok');
+        // Try to get error as JSON first
+        let errorData;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          errorData = await response.json();
+          throw new Error(errorData.message || `Server error: ${response.status}`);
+        } else {
+          // If not JSON, get text and throw a more generic error
+          const textError = await response.text();
+          console.error('Non-JSON error response:', textError);
+          throw new Error(`Server error: ${response.status}`);
+        }
       }
 
+      // If we got here, response is OK, so parse JSON
       const data = await response.json();
+      console.log('Response from API:', data);
 
       if (data.success) {
         setMessage({ text: 'Food item added successfully!', type: 'success' });
@@ -98,6 +140,7 @@ export default function AddAdmin() {
           CategoryName: '',
           img: '',
           price: '',
+          halfPrice: ''
         });
       } else {
         setMessage({ text: data.message || 'Failed to add food item', type: 'error' });
@@ -107,7 +150,7 @@ export default function AddAdmin() {
       setMessage({
         text: error.message === 'Not authenticated'
           ? 'Please login to add food items'
-          : 'Error adding food item',
+          : `Error: ${error.message}`,
         type: 'error'
       });
     } finally {
@@ -188,19 +231,37 @@ export default function AddAdmin() {
                   />
                 </div>
 
-                <div className="mb-3">
-                  <label htmlFor="price" className="form-label">Price (Full)</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="price"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                    min="0"
-                    step="0.01"
-                  />
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="price" className="form-label">Price (Full)</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="price"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleChange}
+                        required
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="halfPrice" className="form-label">Half Price (Calculated)</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="halfPrice"
+                        name="halfPrice"
+                        value={formData.halfPrice}
+                        disabled
+                      />
+                      <small className="form-text text-muted">Automatically calculated as 60% of full price</small>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="d-grid gap-2">

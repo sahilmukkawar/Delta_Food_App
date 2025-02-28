@@ -2,36 +2,30 @@ const mongoose = require("mongoose");
 
 const mongodb = async () => {
     try {
-        // Connect to MongoDB with necessary options
+        // Prevent multiple connections
+        if (mongoose.connection.readyState === 1) {
+            console.log("✅ MongoDB already connected.");
+            return;
+        }
+
         await mongoose.connect("mongodb+srv://user1:hCHt58AfgDP5X@foodapp.vquc4.mongodb.net/foodapp", {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
-        console.log("DB connected");
+        console.log("✅ MongoDB connected successfully.");
 
-        // Access food items collection
-        const foodCollection = mongoose.connection.db.collection("food");
-        const foodData = await foodCollection.find({}).toArray();
-        global.food_items = foodData;
+        // Load collections into global variables
+        const db = mongoose.connection.db;
 
-        // Access category collection
-        const categoryCollection = mongoose.connection.db.collection("category");
-        const catData = await categoryCollection.find({}).toArray();
-        global.food_category = catData;
-
-        const userCollection = mongoose.connection.db.collection("users");
-        const userData = await userCollection.find({}).toArray();
-        global.user_data = userData;
-
-         // Access orders collection
-        const OrderCollection = mongoose.connection.db.collection("allcustorders");
-        const OrderData = await OrderCollection.find({}).toArray(); // Fixed: using OrderCollection instead of foodCollection
-        global.order_items = OrderData;
+        global.food_items = await db.collection("food").find({}).toArray();
+        global.food_category = await db.collection("category").find({}).toArray();
+        global.user_data = await db.collection("users").find({}).toArray();
+        global.order_items = await db.collection("allcustorders").find({}).toArray();
 
     } catch (err) {
-        console.error("MongoDB Connection Error:", err);
-        process.exit(1); // Exit the process if the connection fails
+        console.error("❌ MongoDB Connection Error:", err);
+        process.exit(1);
     }
 };
 
