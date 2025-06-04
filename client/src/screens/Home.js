@@ -29,7 +29,16 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // Initial load
     loadData();
+
+    // Set up polling every 5 seconds
+    const pollInterval = setInterval(() => {
+      loadData();
+    }, 5000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(pollInterval);
   }, []);
 
   return (

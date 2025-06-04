@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const addFoodItem = require('./addFood'); // Import the addFood function
 const { MongoClient, ObjectId } = require("mongodb");
+const { refreshGlobalData } = require('../mongooseConnect');
 
 // MongoDB Atlas Connection URL
 const uri = "mongodb+srv://user1:hCHt58AfgDP5X@foodapp.vquc4.mongodb.net/foodapp";
@@ -24,6 +25,8 @@ router.post('/addfood', async (req, res) => {
         const result = await addFoodItem(req.body);
 
         if (result.success) {
+            // Refresh global data after successful insertion
+            await refreshGlobalData();
             res.json({ success: true, message: 'Food item added successfully', insertedId: result.insertedId });
         } else {
             res.status(500).json({ success: false, message: 'Failed to add food item', error: result.error });
@@ -92,6 +95,9 @@ router.put('/updateFoodItem', async (req, res) => {
             });
         }
 
+        // Refresh global data after successful update
+        await refreshGlobalData();
+
         res.json({
             success: true,
             message: 'Food item updated successfully'
@@ -152,6 +158,9 @@ router.delete('/deleteFoodItem', async (req, res) => {
                 message: 'Food item not found'
             });
         }
+
+        // Refresh global data after successful deletion
+        await refreshGlobalData();
 
         res.json({
             success: true,

@@ -1,5 +1,18 @@
 const mongoose = require("mongoose");
 
+const refreshGlobalData = async () => {
+    try {
+        const db = mongoose.connection.db;
+        global.food_items = await db.collection("food").find({}).toArray();
+        global.food_category = await db.collection("category").find({}).toArray();
+        global.user_data = await db.collection("users").find({}).toArray();
+        global.order_items = await db.collection("allcustorders").find({}).toArray();
+        console.log("✅ Global data refreshed successfully");
+    } catch (err) {
+        console.error("❌ Error refreshing global data:", err);
+    }
+};
+
 const mongodb = async () => {
     try {
         // Prevent multiple connections
@@ -15,13 +28,8 @@ const mongodb = async () => {
 
         console.log("✅ MongoDB connected successfully.");
 
-        // Load collections into global variables
-        const db = mongoose.connection.db;
-
-        global.food_items = await db.collection("food").find({}).toArray();
-        global.food_category = await db.collection("category").find({}).toArray();
-        global.user_data = await db.collection("users").find({}).toArray();
-        global.order_items = await db.collection("allcustorders").find({}).toArray();
+        // Initial load of collections into global variables
+        await refreshGlobalData();
 
     } catch (err) {
         console.error("❌ MongoDB Connection Error:", err);
@@ -29,4 +37,4 @@ const mongodb = async () => {
     }
 };
 
-module.exports = mongodb;
+module.exports = { mongodb, refreshGlobalData };

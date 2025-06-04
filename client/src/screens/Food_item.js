@@ -28,63 +28,58 @@ export default function Food_item() {
     };
 
     useEffect(() => {
+        // Initial load
         loadData();
+
+        // Set up polling every 5 seconds
+        const pollInterval = setInterval(() => {
+            loadData();
+        }, 5000);
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(pollInterval);
     }, []);
 
-    const handleDelete = async (itemId) => {
-        if (!window.confirm('Are you sure you want to delete this item?')) {
-            return;
-        }
-
+    const handleDelete = async (id) => {
         try {
-            const authToken = localStorage.getItem('authToken');
-            if (!authToken) {
-                throw new Error('Not authenticated');
-            }
-
             const response = await fetch(`${API_BASE_URL}/deleteFoodItem`, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ id: itemId })
+                body: JSON.stringify({ id })
             });
 
             const data = await response.json();
-
-            if (response.ok && data.success) {
-                setMessage({ text: 'Food item deleted successfully!', type: 'success' });
-                loadData(); // Reload the food items
+            if (data.success) {
+                setMessage({ text: 'Food item deleted successfully', type: 'success' });
+                // Refresh data immediately after deletion
+                loadData();
             } else {
-                throw new Error(data.message || 'Failed to delete food item');
+                setMessage({ text: data.message || 'Failed to delete food item', type: 'error' });
             }
         } catch (error) {
             console.error('Error deleting food item:', error);
-            setMessage({
-                text: error.message === 'Not authenticated'
-                    ? 'Please login to delete food items'
-                    : `Error: ${error.message}`,
-                type: 'error'
-            });
+            setMessage({ text: 'Failed to delete food item', type: 'error' });
         }
     };
 
     return (
-        <>
+        <div>
             <Navbar />
-            <div className="container" style={{ backgroundImage: "url('/img/bg.png')" }}>
-                {message.text && (
-                    <div style={{
-                        padding: '10px',
-                        margin: '20px 0',
-                        borderRadius: '4px',
-                        backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
-                        color: message.type === 'success' ? '#155724' : '#721c24'
-                    }}>
-                        {message.text}
+            {message.text && (
+                <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`} role="alert">
+                    {message.text}
+                    <button type="button" className="btn-close" onClick={() => setMessage({ text: '', type: '' })} aria-label="Close"></button>
+                </div>
+            )}
+
+            <div className="container">
+                <div className="row">
+                    <div className="col-12">
+                        <h2 className="text-center my-4">Manage Food Items</h2>
                     </div>
-                )}
+                </div>
 
                 {foodCat.length > 0 ? (
                     foodCat.map((data, index) => (
@@ -122,14 +117,19 @@ export default function Food_item() {
                     <div>Loading...</div>
                 )}
             </div>
+
             {selectedItem && (
                 <EditFoodItem
                     selectedItem={selectedItem}
                     onClose={() => setSelectedItem(null)}
-                    onUpdate={loadData}
+                    onUpdate={() => {
+                        loadData();
+                        setSelectedItem(null);
+                    }}
                 />
             )}
+
             <Footer />
-        </>
+        </div>
     );
 }
