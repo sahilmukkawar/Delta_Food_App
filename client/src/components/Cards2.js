@@ -132,39 +132,52 @@ export default function Cards2(props) {
                     alignItems: "center",
                     gap: "12px"
                 }}>
-
-                    <button
-                        onClick={handleEditCart}
-                        style={{
-                            flex: 1,
-                            padding: "10px",
-                            backgroundColor: cartButtonText === "EDIT" ? "#007BFF" : "#37b53f",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "8px",
-                            fontWeight: "600",
-                            fontSize: "14px",
-                            transition: "background-color 0.3s",
-                            cursor: "pointer"
-                        }}
-                    >
-                        {cartButtonText}
-                    </button>
-
-                    <div className="d-flex gap-2">
+                    {/* Beautified Buttons Only */}
+                    <div style={{ display: "flex", gap: "12px" }}>
                         <button
-                            className="btn btn-primary"
                             onClick={props.onEdit}
-                            style={{ padding: '4px 8px' }}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "8px 14px",
+                                backgroundColor: "#007bff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontSize: "14px",
+                                fontWeight: "500",
+                                cursor: "pointer",
+                                transition: "background-color 0.3s",
+                                boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0056b3"}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#007bff"}
                         >
-                            <i className="fas fa-edit"></i>
+                            <i className="fas fa-edit" style={{ marginRight: "6px" }}></i> Edit
                         </button>
+
                         <button
-                            className="btn btn-danger"
                             onClick={props.onDelete}
-                            style={{ padding: '4px 8px' }}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "8px 14px",
+                                backgroundColor: "#dc3545",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontSize: "14px",
+                                fontWeight: "500",
+                                cursor: "pointer",
+                                transition: "background-color 0.3s",
+                                boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#a71d2a"}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#dc3545"}
                         >
-                            <i className="fas fa-trash"></i>
+                            <i className="fas fa-trash" style={{ marginRight: "6px" }}></i> Delete
                         </button>
                     </div>
                 </div>
