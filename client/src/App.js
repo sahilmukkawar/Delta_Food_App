@@ -4,7 +4,6 @@ import Signup from "./screens/Signup";
 import Order from "./screens/Orders.js";
 import AddFood from './screens/AddFood.js';
 import AddCategory from './screens/AddCategory.js';
-import AdminDashboard from './screens/AdminDashboard.js';
 import Food_item from "./screens/Food_item.js";
 
 
@@ -26,7 +25,6 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />
-            <Route exact path="/admin" element={<AdminDashboard />} />
             <Route exact path="/createuser" element={<Signup />} />
             <Route exact path="/orders" element={<Order />} />
             <Route exact path="/addfood" element={<AddFood />} />
