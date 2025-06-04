@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const addFoodItem = require('./addFood'); // Import the addFood function
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 // MongoDB Atlas Connection URL
 const uri = "mongodb+srv://user1:hCHt58AfgDP5X@foodapp.vquc4.mongodb.net/foodapp";
@@ -49,6 +49,14 @@ router.put('/updateFoodItem', async (req, res) => {
             });
         }
 
+        // Validate ObjectId
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid food item ID format'
+            });
+        }
+
         await client.connect();
         console.log("Connected to MongoDB");
 
@@ -57,7 +65,7 @@ router.put('/updateFoodItem', async (req, res) => {
 
         // Update the food item
         const result = await collection.updateOne(
-            { _id: new MongoClient.ObjectId(id) },
+            { _id: new ObjectId(id) },
             {
                 $set: {
                     name,
@@ -91,6 +99,12 @@ router.put('/updateFoodItem', async (req, res) => {
 
     } catch (error) {
         console.error('Error updating food item:', error);
+        // Log the full error details
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
         res.status(500).json({
             success: false,
             message: 'Internal server error',
@@ -115,6 +129,14 @@ router.delete('/deleteFoodItem', async (req, res) => {
             });
         }
 
+        // Validate ObjectId
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid food item ID format'
+            });
+        }
+
         await client.connect();
         console.log("Connected to MongoDB");
 
@@ -122,7 +144,7 @@ router.delete('/deleteFoodItem', async (req, res) => {
         const collection = database.collection("food");
 
         // Delete the food item
-        const result = await collection.deleteOne({ _id: new MongoClient.ObjectId(id) });
+        const result = await collection.deleteOne({ _id: new ObjectId(id) });
 
         if (result.deletedCount === 0) {
             return res.status(404).json({
@@ -138,6 +160,12 @@ router.delete('/deleteFoodItem', async (req, res) => {
 
     } catch (error) {
         console.error('Error deleting food item:', error);
+        // Log the full error details
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
         res.status(500).json({
             success: false,
             message: 'Internal server error',
