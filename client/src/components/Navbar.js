@@ -4,6 +4,7 @@ import Modal from '../Modals';
 import Cart from '../screens/Cart';
 import { useCart, useDispatchCart } from '../components/ContextReducer';
 import CustOrderfd from "../screens/CustOrderfd";
+import { API_BASE_URL } from '../config';
 
 export default function Navbar() {
   const [cartView, setCartView] = useState(false);
@@ -25,7 +26,7 @@ export default function Navbar() {
 
       if (userEmail && authToken) {
         try {
-          const response = await fetch("http://localhost:5000/api/getUserInfo", {
+          const response = await fetch(`${API_BASE_URL}/getUserInfo`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

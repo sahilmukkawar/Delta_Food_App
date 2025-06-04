@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Orders.css';
+import { API_BASE_URL } from '../config';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -8,7 +9,7 @@ const AdminOrders = () => {
 
   const loadData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/custorderdata", {
+      const response = await fetch(`${API_BASE_URL}/custorderdata`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -38,7 +39,7 @@ const AdminOrders = () => {
 
   const formatPrice = (price) => {
     return typeof price === 'number' ? price :
-           typeof price === 'object' && price.$numberInt ? parseInt(price.$numberInt) : 0;
+      typeof price === 'object' && price.$numberInt ? parseInt(price.$numberInt) : 0;
   };
 
   const formatDate = (dateStr) => {

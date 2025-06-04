@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from '../config';
 
 export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
     const [formData, setFormData] = useState({
@@ -13,9 +14,6 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
-
-    // Define the base URL for API requests
-    const API_BASE_URL = "http://localhost:5000/api";
 
     // First, populate the form data when selectedItem changes
     useEffect(() => {

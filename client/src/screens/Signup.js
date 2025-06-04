@@ -7,6 +7,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import HttpsIcon from '@mui/icons-material/Https';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
 import Footer from '../components/Footer';
+import { API_BASE_URL } from '../config';
 
 export default function Signup() {
     const [credentials, setCredentials] = useState({
@@ -18,17 +19,16 @@ export default function Signup() {
     const navigate = useNavigate();
     async function handleSubmit(event) {
         event.preventDefault();
-        const response = await fetch("http://localhost:5000/api/createuser", {
+        const response = await fetch(`${API_BASE_URL}/createuser`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ name: credentials.name, email: credentials.email, password: credentials.password, location: credentials.location })
-
         });
-       
+
         const json = await response.json();
-        
+
         if (!json.success) {
             alert("Enter Valid Credentials")
         } else {
@@ -63,7 +63,7 @@ export default function Signup() {
 
                                                     <PersonIcon style={{ fontSize: "2rem" }} />
                                                     <div className="form-outline flex-fill mb-0">
-                                                      
+
                                                         <input type="text" className="form-control" id="name" name="name" value={credentials.name} onChange={handleChange} placeholder='Your Name' />
                                                     </div>
                                                 </div>

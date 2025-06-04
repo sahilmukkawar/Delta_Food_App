@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import './CustOrderfd.css';
+import { API_BASE_URL } from '../config';
 
 export default function CustOrderfd() {
- const [odata,setOdata]=useState([]);
+    const [odata, setOdata] = useState([]);
 
     async function loadData() {
         try {
-            let response = await fetch("http://localhost:5000/api/custorderdata", {
+            let response = await fetch(`${API_BASE_URL}/custorderdata`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body:JSON.stringify({custEmail:localStorage.getItem("userEmail")})
+                body: JSON.stringify({ custEmail: localStorage.getItem("userEmail") })
             });
             response = await response.json();
             setOdata(response);
-           
+
         } catch (err) {
-           
+
         }
     }
     useEffect(() => {
@@ -39,20 +40,20 @@ export default function CustOrderfd() {
                         </tr>
                     </thead>
                     <tbody>
-                
-                {odata.map((order,index) =>{
-                    return(<tr key={index} style={{color:"white"}}>
-                        <th scope="row" style={{color:"white"}}> {index+1}</th>
-                        <td style={{color:"white"}}>{order.date}</td>
-                        <td style={{color:"white"}}>{order.price}</td>
-                        
-                        <td style={{color:"white"}}>{order.order_data.map((item,index)=>item.name+ "  ")}</td>
 
-                      
+                        {odata.map((order, index) => {
+                            return (<tr key={index} style={{ color: "white" }}>
+                                <th scope="row" style={{ color: "white" }}> {index + 1}</th>
+                                <td style={{ color: "white" }}>{order.date}</td>
+                                <td style={{ color: "white" }}>{order.price}</td>
 
-                    </tr>) 
-                })}
-            </tbody>
+                                <td style={{ color: "white" }}>{order.order_data.map((item, index) => item.name + "  ")}</td>
+
+
+
+                            </tr>)
+                        })}
+                    </tbody>
 
                 </table>
             </div>

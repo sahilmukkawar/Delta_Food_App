@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 export default function AddAdmin() {
   const [formData, setFormData] = useState({
@@ -15,9 +16,6 @@ export default function AddAdmin() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
-
-  // Define the base URL for API requests
-  const API_BASE_URL = "http://localhost:5000/api";
 
   useEffect(() => {
     const fetchCategories = async () => {

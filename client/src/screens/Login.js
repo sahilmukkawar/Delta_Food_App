@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import EmailIcon from '@mui/icons-material/Email';
 import HttpsIcon from '@mui/icons-material/Https';
+import { API_BASE_URL } from '../config';
 
 export default function Login() {
   const [credentials, setCredentials] = useState({
@@ -14,13 +15,12 @@ export default function Login() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const response = await fetch("http://localhost:5000/api/loginuser", {
+    const response = await fetch(`${API_BASE_URL}/loginuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ email: credentials.email, password: credentials.password })
-
     });
 
     const json = await response.json();
@@ -60,7 +60,7 @@ export default function Login() {
                     </div>
                     <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
-                      <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Welcome Foodie! 😋,<br/> Login Here...</p>
+                      <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Welcome Foodie! 😋,<br /> Login Here...</p>
 
                       <form className="mx-1 mx-md-4" onSubmit={handleSubmit}>
 

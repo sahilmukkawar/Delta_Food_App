@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart, useDispatchCart } from '../components/ContextReducer';
+import { API_BASE_URL } from '../config';
 
 export default function Cart(props) {
   const data = useCart();
@@ -9,7 +10,7 @@ export default function Cart(props) {
 
   async function handleCheckOut() {
     try {
-      const response = await fetch("http://localhost:5000/api/cartorderdata", {
+      const response = await fetch(`${API_BASE_URL}/cartorderdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

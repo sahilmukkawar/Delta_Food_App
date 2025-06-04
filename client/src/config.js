@@ -1,0 +1,1 @@
+export const API_BASE_URL = "https://delta-food-app-1.onrender.com/api"; 
