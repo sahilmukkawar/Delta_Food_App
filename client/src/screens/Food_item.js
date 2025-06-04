@@ -10,6 +10,7 @@ export default function Food_item() {
     const [foodItem, setFoodItem] = useState([]);
     const [searchedString, setSearchedString] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
+    const [message, setMessage] = useState({ text: '', type: '' });
 
     const loadData = async () => {
         try {
@@ -22,6 +23,7 @@ export default function Food_item() {
             setFoodItem(data[0]);
         } catch (error) {
             console.error("Error loading food data:", error);
+            setMessage({ text: "Failed to load food items", type: 'error' });
         }
     };
 
@@ -29,10 +31,61 @@ export default function Food_item() {
         loadData();
     }, []);
 
+    const handleDelete = async (itemId) => {
+        if (!window.confirm('Are you sure you want to delete this item?')) {
+            return;
+        }
+
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                throw new Error('Not authenticated');
+            }
+
+            const response = await fetch(`${API_BASE_URL}/deleteFoodItem`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ id: itemId })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                setMessage({ text: 'Food item deleted successfully!', type: 'success' });
+                loadData(); // Reload the food items
+            } else {
+                throw new Error(data.message || 'Failed to delete food item');
+            }
+        } catch (error) {
+            console.error('Error deleting food item:', error);
+            setMessage({
+                text: error.message === 'Not authenticated'
+                    ? 'Please login to delete food items'
+                    : `Error: ${error.message}`,
+                type: 'error'
+            });
+        }
+    };
+
     return (
         <>
             <Navbar />
             <div className="container" style={{ backgroundImage: "url('/img/bg.png')" }}>
+                {message.text && (
+                    <div style={{
+                        padding: '10px',
+                        margin: '20px 0',
+                        borderRadius: '4px',
+                        backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+                        color: message.type === 'success' ? '#155724' : '#721c24'
+                    }}>
+                        {message.text}
+                    </div>
+                )}
+
                 {foodCat.length > 0 ? (
                     foodCat.map((data, index) => (
                         <div key={index} className="my-4">
@@ -55,6 +108,7 @@ export default function Food_item() {
                                                     options={categFoodItem.options[0]}
                                                     id={categFoodItem._id}
                                                     onEdit={() => setSelectedItem(categFoodItem)}
+                                                    onDelete={() => handleDelete(categFoodItem._id)}
                                                 />
                                             </div>
                                         ))

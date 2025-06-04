@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const addFoodItem = require('./addFood'); // Import the addFood function
+const { MongoClient } = require("mongodb");
+
+// MongoDB Atlas Connection URL
+const uri = "mongodb+srv://user1:hCHt58AfgDP5X@foodapp.vquc4.mongodb.net/foodapp";
 
 // Add food item route
 router.post('/addfood', async (req, res) => {
@@ -27,6 +31,120 @@ router.post('/addfood', async (req, res) => {
     } catch (error) {
         console.error('Error processing request:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// Update food item route
+router.put('/updateFoodItem', async (req, res) => {
+    const client = new MongoClient(uri);
+
+    try {
+        const { id, name, description, CategoryName, img, options } = req.body;
+
+        // Validate required fields
+        if (!id || !name || !description || !CategoryName || !img || !options) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required'
+            });
+        }
+
+        await client.connect();
+        console.log("Connected to MongoDB");
+
+        const database = client.db("foodapp");
+        const collection = database.collection("food");
+
+        // Update the food item
+        const result = await collection.updateOne(
+            { _id: new MongoClient.ObjectId(id) },
+            {
+                $set: {
+                    name,
+                    description,
+                    CategoryName,
+                    img,
+                    options,
+                    updatedAt: new Date()
+                }
+            }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Food item not found'
+            });
+        }
+
+        if (result.modifiedCount === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No changes were made'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Food item updated successfully'
+        });
+
+    } catch (error) {
+        console.error('Error updating food item:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    } finally {
+        await client.close();
+    }
+});
+
+// Delete food item route
+router.delete('/deleteFoodItem', async (req, res) => {
+    const client = new MongoClient(uri);
+
+    try {
+        const { id } = req.body;
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Food item ID is required'
+            });
+        }
+
+        await client.connect();
+        console.log("Connected to MongoDB");
+
+        const database = client.db("foodapp");
+        const collection = database.collection("food");
+
+        // Delete the food item
+        const result = await collection.deleteOne({ _id: new MongoClient.ObjectId(id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Food item not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Food item deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Error deleting food item:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    } finally {
+        await client.close();
     }
 });
 

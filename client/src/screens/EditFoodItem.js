@@ -68,13 +68,11 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
                 } else {
                     console.error("Unexpected data format:", data);
                     setMessage({ text: "Could not load categories. Unexpected data format.", type: 'error' });
-                    // Set an empty array to prevent further errors
                     setCategories([]);
                 }
             } catch (error) {
                 console.error("Error fetching categories:", error);
                 setMessage({ text: `Failed to load categories: ${error.message}`, type: 'error' });
-                // Set an empty array to prevent further errors
                 setCategories([]);
             }
         };
@@ -102,18 +100,15 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!selectedItem || !selectedItem._id) {
-            setMessage({ text: "No item selected for editing", type: 'error' });
-            return;
-        }
-
         setLoading(true);
+        setMessage({ text: '', type: '' });
 
         try {
             const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                throw new Error('Not authenticated');
+            }
 
-            // Prepare request data
             const requestData = {
                 id: selectedItem._id,
                 name: formData.name,
@@ -122,25 +117,32 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
                 img: formData.img,
                 options: [
                     {
-                        half: formData.half,
-                        full: formData.price
+                        half: parseFloat(formData.half),
+                        full: parseFloat(formData.price)
                     }
                 ]
             };
 
-            console.log('Sending data to API:', requestData);
+            console.log('Sending update request:', requestData);
 
             const response = await fetch(`${API_BASE_URL}/updateFoodItem`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': authToken ? `Bearer ${authToken}` : ''
+                    'Authorization': `Bearer ${authToken}`,
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(requestData)
             });
 
+            // Check if the response is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server returned non-JSON response');
+            }
+
             const data = await response.json();
-            console.log('Response from API:', data);
+            console.log('Update response:', data);
 
             if (response.ok && data.success) {
                 setMessage({ text: 'Food item updated successfully!', type: 'success' });
@@ -153,12 +155,14 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
                     }
                 }, 1500);
             } else {
-                setMessage({ text: data.message || 'Failed to update food item', type: 'error' });
+                throw new Error(data.message || 'Failed to update food item');
             }
         } catch (error) {
             console.error('Error updating food item:', error);
             setMessage({
-                text: `Error: ${error.message}`,
+                text: error.message === 'Not authenticated'
+                    ? 'Please login to edit food items'
+                    : `Error: ${error.message}`,
                 type: 'error'
             });
         } finally {
@@ -167,49 +171,108 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <h2 className="text-center mb-4">Edit Food Item</h2>
+        <div className="modal" style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+        }}>
+            <div className="modal-content" style={{
+                backgroundColor: 'white',
+                padding: '20px',
+                borderRadius: '8px',
+                width: '90%',
+                maxWidth: '600px',
+                maxHeight: '90vh',
+                overflowY: 'auto'
+            }}>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '20px'
+                }}>
+                    <h2 style={{ margin: 0 }}>Edit Food Item</h2>
+                    <button
+                        onClick={onClose}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '24px',
+                            cursor: 'pointer',
+                            color: '#666'
+                        }}
+                    >
+                        ×
+                    </button>
+                </div>
 
                 {message.text && (
-                    <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-danger'} mb-4`}>
+                    <div style={{
+                        padding: '10px',
+                        marginBottom: '20px',
+                        borderRadius: '4px',
+                        backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+                        color: message.type === 'success' ? '#155724' : '#721c24'
+                    }}>
                         {message.text}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label htmlFor="name" className="form-label">Food Name</label>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', marginBottom: '5px' }}>Food Name</label>
                         <input
                             type="text"
-                            className="form-control"
-                            id="name"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #ddd'
+                            }}
+                            required
                         />
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="description" className="form-label">Description</label>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', marginBottom: '5px' }}>Description</label>
                         <textarea
-                            className="form-control"
-                            id="description"
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            rows="3"
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #ddd',
+                                minHeight: '100px'
+                            }}
+                            required
                         />
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="CategoryName" className="form-label">Category</label>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', marginBottom: '5px' }}>Category</label>
                         <select
-                            className="form-control"
-                            id="CategoryName"
                             name="CategoryName"
                             value={formData.CategoryName}
                             onChange={handleChange}
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #ddd'
+                            }}
+                            required
                         >
                             <option value="">Select Category</option>
                             {categories.map((category, index) => (
@@ -220,63 +283,95 @@ export default function EditFoodItem({ selectedItem, onClose, onUpdate }) {
                         </select>
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="img" className="form-label">Image URL</label>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', marginBottom: '5px' }}>Image URL</label>
                         <input
                             type="text"
-                            className="form-control"
-                            id="img"
                             name="img"
                             value={formData.img}
                             onChange={handleChange}
+                            style={{
+                                width: '100%',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #ddd'
+                            }}
+                            required
                         />
                     </div>
 
-                    <div className="row">
-                        <div className="col-md-6">
-                            <div className="mb-3">
-                                <label htmlFor="price" className="form-label">Price (Full)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="price"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                />
-                            </div>
+                    <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ display: 'block', marginBottom: '5px' }}>Full Price</label>
+                            <input
+                                type="number"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
+                                style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #ddd'
+                                }}
+                                required
+                                min="0"
+                                step="0.01"
+                            />
                         </div>
-                        <div className="col-md-6">
-                            <div className="mb-3">
-                                <label htmlFor="half" className="form-label">Half Price</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="half"
-                                    name="half"
-                                    value={formData.half}
-                                    onChange={handleChange}
-                                />
-                                <small className="form-text text-muted">Auto-calculated as 60% of full price</small>
-                            </div>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ display: 'block', marginBottom: '5px' }}>Half Price</label>
+                            <input
+                                type="number"
+                                name="half"
+                                value={formData.half}
+                                onChange={handleChange}
+                                style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #ddd'
+                                }}
+                                required
+                                min="0"
+                                step="0.01"
+                            />
                         </div>
                     </div>
 
-                    <div className="d-flex justify-content-between mt-4">
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '10px',
+                        marginTop: '20px'
+                    }}>
                         <button
                             type="button"
-                            className="btn btn-secondary"
                             onClick={onClose}
+                            style={{
+                                padding: '8px 16px',
+                                borderRadius: '4px',
+                                border: '1px solid #ddd',
+                                background: 'white',
+                                cursor: 'pointer'
+                            }}
                             disabled={loading}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="btn btn-primary"
+                            style={{
+                                padding: '8px 16px',
+                                borderRadius: '4px',
+                                border: 'none',
+                                background: '#007bff',
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
                             disabled={loading}
                         >
-                            {loading ? 'Updating...' : 'Update Food Item'}
+                            {loading ? 'Updating...' : 'Update Item'}
                         </button>
                     </div>
                 </form>
