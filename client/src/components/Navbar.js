@@ -98,7 +98,7 @@ export default function Navbar() {
         }}
       >
         Food Items
-      </Link>;
+      </Link>
 
       <button
         onClick={handleLogout}
